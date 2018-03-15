@@ -1,0 +1,38 @@
+.umich-altmetric {
+    font-size: 14px;
+}
+
+.umich-altmetric ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.umich-altmetric .items > li {
+    padding: 20px;
+    box-sizing: border-box;
+    page-break-inside: avoid;   /* FF 20+ */
+    break-inside: avoid-column; /* Everyone Else */
+}
+
+.umich-altmetric .items > li .altmetric-embed {
+    float: left;
+}
+
+.umich-altmetric .items > li h4 {
+    margin: 0;
+}
+
+.umich-altmetric .items > li .meta em {
+    font-weight: bold;
+    font-style: normal;
+}
+
+.umich-altmetric.uma-donut-size .items > li h4,
+.umich-altmetric.uma-donut-size .items > li .meta {
+    margin-left: 84px;
+}
+.umich-altmetric.uma-donut-size-medium .items > li h4,
+.umich-altmetric.uma-donut-size-medium .items > li .meta {
+    margin-left: 140px;
+}

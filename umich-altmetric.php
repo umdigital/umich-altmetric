@@ -1,16 +1,16 @@
 <?php
 /**
- * Plugin Name: University of Michigan: Altmetrics
- * Plugin URI: https://github.com/umdigital/umich-altmetrics/
- * Description: Display Altmetrics attention lists via API
- * Version: 1.0
+ * Plugin Name: University of Michigan: Altmetric
+ * Plugin URI: https://github.com/umdigital/umich-altmetric/
+ * Description: Display Altmetric attention lists via API
+ * Version: 1.1
  * Author: U-M: Digital
  * Author URI: http://vpcomm.umich.edu
  */
 
 define( 'UMICHALTMETRICS_PATH', dirname( __FILE__ ) . DIRECTORY_SEPARATOR );
 
-class UmichAltmetrics {
+class UmichAltmetric {
     static public $displayCounter = 0;
 
     static private $_cacheTimeout = 6;
@@ -33,13 +33,13 @@ class UmichAltmetrics {
                 // this is the name of the folder your plugin lives in
                 'proper_folder_name' => dirname( plugin_basename( __FILE__ ) ),
                 // the github API url of your github repo
-                'api_url' => 'https://api.github.com/repos/umdigital/umich-altmetrics',
+                'api_url' => 'https://api.github.com/repos/umdigital/umich-altmetric',
                 // the github raw url of your github repo
-                'raw_url' => 'https://raw.githubusercontent.com/umdigital/umich-altmetrics/master',
+                'raw_url' => 'https://raw.githubusercontent.com/umdigital/umich-altmetric/master',
                 // the github url of your github repo
-                'github_url' => 'https://github.com/umdigital/umich-altmetrics',
+                'github_url' => 'https://github.com/umdigital/umich-altmetric',
                  // the zip url of the github repo
-                'zip_url' => 'https://github.com/umdigital/umich-altmetrics/zipball/master',
+                'zip_url' => 'https://github.com/umdigital/umich-altmetric/zipball/master',
                 // wether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
                 'sslverify' => true,
                 // which version of WordPress does your plugin require?
@@ -54,13 +54,13 @@ class UmichAltmetrics {
         }
 
         add_action( 'wp_enqueue_scripts', function(){
-            // load altmetrics donut
-            wp_enqueue_script('umich-altmetrics-donut', 'https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js' );
+            // load altmetric donut
+            wp_enqueue_script('umich-altmetric-donut', 'https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js' );
 
-            wp_enqueue_style( 'umich-altmetrics', plugins_url('assets/umich-altmetrics.css', __FILE__ ) );
+            wp_enqueue_style( 'umich-altmetric', plugins_url('assets/umich-altmetric.css', __FILE__ ) );
         });
 
-        add_shortcode( 'altmetrics', function( $atts, $url = '' ){
+        add_shortcode( 'altmetric', function( $atts, $url = '' ){
             self::$displayCounter++;
 
             $atts = shortcode_atts(array(
@@ -90,13 +90,13 @@ class UmichAltmetrics {
 
             // locate template
             $tpl = implode( DIRECTORY_SEPARATOR, array( UMICHALTMETRICS_PATH, 'templates', 'default.tpl' ) );
-            $tpl = locate_template( array( 'umich-altmetrics/'. $atts['template'] ), false ) ?: $tpl;
+            $tpl = locate_template( array( 'umich-altmetric/'. $atts['template'] ), false ) ?: $tpl;
 
             // GET ALTMETRICS DATA
             $wpUpload  = wp_upload_dir();
             $cachePath = implode( DIRECTORY_SEPARATOR, array(
                 $wpUpload['basedir'],
-                'umich-altmetrics-cache',
+                'umich-altmetric-cache',
                 md5( $atts['url'] ) .'.cache'
             ));
 
@@ -154,7 +154,7 @@ class UmichAltmetrics {
             $wpUpload  = wp_upload_dir();
             $cachePath = implode( DIRECTORY_SEPARATOR, array(
                 $wpUpload['basedir'],
-                'umich-altmetrics-cache',
+                'umich-altmetric-cache',
                 '*'
             ));
 
@@ -166,4 +166,4 @@ class UmichAltmetrics {
         }
     }
 }
-UmichAltmetrics::init();
+UmichAltmetric::init();

@@ -1,13 +1,13 @@
-# UMich Altmetrics
-Display Altmetrics data using a wordpress shortcode.
+# UMich Altmetric
+Display Altmetric data using a wordpress shortcode.
 
 ### Shortcode
 ```
-[altmetrics url="{MY_URL_HERE}" limit="25" donut-size="small" template="default"]
+[altmetric url="{MY_URL_HERE}" limit="25" donut-size="small" template="default"]
 ```
 OR
 ```
-[altmetrics limit="25" donut-size="small" template="default"]{MY_URL_HERE}[/altmetrics]
+[altmetric limit="25" donut-size="small" template="default"]{MY_URL_HERE}[/altmetric]
 ```
 
 #### Shortcode options

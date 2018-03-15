@@ -1,4 +1,4 @@
-<div class="umich-altmetrics uma-display-<?=UmichAltmetrics::$displayCounter;?> uma-donut-size<?=($atts['donut-size'] ? '-'. $atts['donut-size'] : null);?>">
+<div class="umich-altmetric uma-display-<?=UmichAltmetric::$displayCounter;?> uma-donut-size<?=($atts['donut-size'] ? '-'. $atts['donut-size'] : null);?>">
     <ul class="items">
         <? foreach( $researchItems['items'] as $item ): ?>
         <li class="clearfix">
