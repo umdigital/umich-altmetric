@@ -3,7 +3,7 @@
  * Plugin Name: University of Michigan: Altmetric
  * Plugin URI: https://github.com/umdigital/umich-altmetric/
  * Description: Display Altmetric attention lists via API
- * Version: 1.1
+ * Version: 1.2
  * Author: U-M: Digital
  * Author URI: http://vpcomm.umich.edu
  */
