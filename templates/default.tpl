@@ -2,7 +2,7 @@
     <ul class="items">
         <? foreach( $researchItems['items'] as $item ): ?>
         <li class="clearfix">
-            <div class="altmetric-embed" data-badge-type="<?=($atts['donut-size'] ? $atts['donut-size'].'-' : null);?>donut" data-doi="<?=@$item->attributes->identifiers->dois[0];?>" data-isbn="<?=@$item->attributes->identifiers->isbns[0];?>"></div>
+            <div class="altmetric-embed" data-badge-type="<?=($atts['donut-size'] ? $atts['donut-size'].'-' : null);?>donut" data-doi="<?=@$item->attributes->identifiers->dois[0];?>" data-isbn="<?=@$item->attributes->identifiers->isbns[0];?>" data-pmid="<?=@$item->attributes->identifiers->{'pubmed-ids'}[0];?>"></div>
             <h4><a href="https://www.altmetric.com/details.php?domain=<?=$_SERVER['HTTP_HOST'];?>&citation_id=<?=$item->id;?>"><?=$item->attributes->title;?></a></h4>
             <ul class="meta">
                 <? if( $item->attributes->{'output-type'} == 'book' ): ?>
