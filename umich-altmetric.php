@@ -3,7 +3,7 @@
  * Plugin Name: University of Michigan: Altmetric
  * Plugin URI: https://github.com/umdigital/umich-altmetric/
  * Description: Display Altmetric attention lists via API
- * Version: 1.2
+ * Version: 1.2.1
  * Author: U-M: Digital
  * Author URI: http://vpcomm.umich.edu
  */
@@ -17,7 +17,7 @@ class UmichAltmetric {
 
     static public function init()
     {
-        self::$_cacheTimeout = 60 * 60 * (self::$_cacheTimeout >= 1 ?: self::$_cacheTimeout);
+        self::$_cacheTimeout = 60 * 60 * (self::$_cacheTimeout >= 1 ? self::$_cacheTimeout : 1);
 
         // UPDATER SETUP
         if( !class_exists( 'WP_GitHub_Updater' ) ) {
@@ -90,7 +90,7 @@ class UmichAltmetric {
 
             // locate template
             $tpl = implode( DIRECTORY_SEPARATOR, array( UMICHALTMETRICS_PATH, 'templates', 'default.tpl' ) );
-            $tpl = locate_template( array( 'umich-altmetric/'. $atts['template'] ), false ) ?: $tpl;
+            $tpl = locate_template( array( 'umich-altmetric/'. $atts['template'] .'.tpl' ), false ) ?: $tpl;
 
             // GET ALTMETRICS DATA
             $wpUpload  = wp_upload_dir();
