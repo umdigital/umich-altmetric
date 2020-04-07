@@ -1,3 +1,7 @@
+1.2.3 (2020-04-07)
+==================
+resolves issue with reprocessing url and altmetric validation
+
 1.2.2 (2020-01-28)
 ==================
 resolves #2 (don't require short_open_tag)

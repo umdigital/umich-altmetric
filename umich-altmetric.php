@@ -3,7 +3,7 @@
  * Plugin Name: University of Michigan: Altmetric
  * Plugin URI: https://github.com/umdigital/umich-altmetric/
  * Description: Display Altmetric attention lists via API
- * Version: 1.2.2
+ * Version: 1.2.3
  * Author: U-M: Digital
  * Author URI: http://vpcomm.umich.edu
  */
@@ -87,6 +87,7 @@ class UmichAltmetric {
             $parts['query'] = http_build_query( $parts['query'] );
             $parts['query'] = $parts['query'] ? '?'. $parts['query'] : '';
             $atts['url'] = "{$parts['scheme']}://{$parts['host']}{$parts['path']}{$parts['query']}";
+            $atts['url'] = preg_replace( '/\[[0-9]+\]/', '[]', urldecode( $atts['url'] ) );
 
             // locate template
             $tpl = implode( DIRECTORY_SEPARATOR, array( UMICHALTMETRICS_PATH, 'templates', 'default.tpl' ) );
@@ -104,20 +105,34 @@ class UmichAltmetric {
                 // update timestamp so other request don't make a pull request at the same time
                 @touch( $cachePath );
 
-                // get live results
-                $stream = stream_context_create(array(
-                    'http' => array(
-                        'timeout' => 1
-                    )
-                ));
-                if( $json = file_get_contents( $atts['url'], false, $stream ) ) {
-                    if( $res = @json_decode( $json ) ) {
-                        if( @$res->meta->response->status == 'ok' ) {
-                            // CACHE RESULTS
-                            wp_mkdir_p( dirname( $cachePath ) );
+                // get live results (use curl if available)
+                if( function_exists( 'curl_init' ) ) {
+                    $curl = curl_init();
+                    curl_setopt( $curl, CURLOPT_URL, $atts['url'] );
+                    curl_setopt( $curl, CURLOPT_HEADER, false );
+                    curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
+                    curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true );
+                    curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 3 ); 
+                    curl_setopt( $curl, CURLOPT_TIMEOUT, 10 );
 
-                            @file_put_contents( $cachePath, $json );
-                        }
+                    $json = curl_exec( $curl );
+                    curl_close( $curl );
+                }
+                else {
+                    $stream = stream_context_create(array(
+                        'http' => array(
+                            'timeout' => 10
+                        )
+                    ));
+                    $json = file_get_contents( $atts['url'], false, $stream );
+                }
+
+                if( $json && ($res = @json_decode( $json )) ) {
+                    if( @$res->meta->response->status == 'ok' ) {
+                        // CACHE RESULTS
+                        wp_mkdir_p( dirname( $cachePath ) );
+
+                        @file_put_contents( $cachePath, $json );
                     }
                 }
             }
