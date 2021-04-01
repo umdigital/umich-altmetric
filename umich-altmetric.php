@@ -3,7 +3,7 @@
  * Plugin Name: University of Michigan: Altmetric
  * Plugin URI: https://github.com/umdigital/umich-altmetric/
  * Description: Display Altmetric attention lists via API
- * Version: 1.2.3
+ * Version: 1.2.4
  * Author: U-M: Digital
  * Author URI: http://vpcomm.umich.edu
  */
@@ -173,7 +173,7 @@ class UmichAltmetric {
                 '*'
             ));
 
-            foreach( glob( $cachPath ) as $file ) {
+            foreach( glob( $cachePath ) as $file ) {
                 if( (filemtime( $file ) + $expires) < time() ) {
                     unlink( $file );
                 }

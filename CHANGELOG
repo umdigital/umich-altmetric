@@ -1,3 +1,7 @@
+1.2.4 (2021-04-01)
+==================
+cache cleanup bugfix
+
 1.2.3 (2020-04-07)
 ==================
 resolves issue with reprocessing url and altmetric validation
