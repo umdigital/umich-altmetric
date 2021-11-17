@@ -1,3 +1,7 @@
+1.2.5 (2021-11-17)
+==================
+resolve issue with spaces in search term not being encoded for api call
+
 1.2.4 (2021-04-01)
 ==================
 cache cleanup bugfix

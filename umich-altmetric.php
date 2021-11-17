@@ -3,7 +3,7 @@
  * Plugin Name: University of Michigan: Altmetric
  * Plugin URI: https://github.com/umdigital/umich-altmetric/
  * Description: Display Altmetric attention lists via API
- * Version: 1.2.4
+ * Version: 1.2.5
  * Author: U-M: Digital
  * Author URI: http://vpcomm.umich.edu
  */
@@ -88,6 +88,7 @@ class UmichAltmetric {
             $parts['query'] = $parts['query'] ? '?'. $parts['query'] : '';
             $atts['url'] = "{$parts['scheme']}://{$parts['host']}{$parts['path']}{$parts['query']}";
             $atts['url'] = preg_replace( '/\[[0-9]+\]/', '[]', urldecode( $atts['url'] ) );
+            $atts['url'] = str_replace( ' ', '%20', $atts['url'] ); // spaces have to be encoded
 
             // locate template
             $tpl = implode( DIRECTORY_SEPARATOR, array( UMICHALTMETRICS_PATH, 'templates', 'default.tpl' ) );
