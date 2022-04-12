@@ -1,0 +1,9 @@
+.wp-block-umichaltmetric-altmetric a {
+    pointer-events: none;
+}
+.wp-block-umichaltmetric-altmetric .components-placeholder a {
+    pointer-events: initial;
+}
+.wp-block-umichaltmetric-altmetric .components-placeholder__learn-more {
+    margin-top: 1em;
+}

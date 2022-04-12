@@ -1,0 +1,55 @@
+.wp-block-umichaltmetric-altmetric.is-style-basic .items {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: .8rem;
+    line-height: 1.3;
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li {
+    padding: 20px;
+    box-sizing: border-box;
+    page-break-inside: avoid;   /* FF 20+ */
+    break-inside: avoid-column; /* Everyone Else */
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li:before,
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li:after {
+    content: ' ';
+    display: table;
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li:after {
+    clear: both;
+}
+
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li h4 {
+    margin: 0.2rem 0 0.5rem 0;
+    line-height: 1.2;
+    font-size: 1rem;
+}
+
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li .meta {
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li .meta dd {
+    margin: 0;
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic .items > li .meta em {
+    font-weight: bold;
+    font-style: normal;
+}
+
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--donut .items .altmetric-embed,
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--medium-donut .items .altmetric-embed,
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--large-donut .items .altmetric-embed {
+    float: left;
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--donut .items > li h4,
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--donut .items > li .meta {
+    margin-left: 84px;
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--medium-donut .items > li h4,
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--medium-donut .items > li .meta {
+    margin-left: 140px;
+}
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--large-donut .items > li h4,
+.wp-block-umichaltmetric-altmetric.is-style-basic.uma-badge-type--large-donut .items > li .meta {
+    margin-left: 200px;
+}

@@ -3,25 +3,26 @@
  * Plugin Name: University of Michigan: Altmetric
  * Plugin URI: https://github.com/umdigital/umich-altmetric/
  * Description: Display Altmetric attention lists via API
- * Version: 1.2.5
+ * Version: 1.3
  * Author: U-M: Digital
- * Author URI: http://vpcomm.umich.edu
+ * Author URI: https://vpcomm.umich.edu
  */
 
-define( 'UMICHALTMETRICS_PATH', dirname( __FILE__ ) . DIRECTORY_SEPARATOR );
-
-class UmichAltmetric {
+class UmichAltmetric
+{
+    static public $pluginPath;
     static public $displayCounter = 0;
 
     static private $_cacheTimeout = 6;
 
     static public function init()
     {
+        self::$pluginPath    = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
         self::$_cacheTimeout = 60 * 60 * (self::$_cacheTimeout >= 1 ? self::$_cacheTimeout : 1);
 
         // UPDATER SETUP
         if( !class_exists( 'WP_GitHub_Updater' ) ) {
-            include_once UMICHALTMETRICS_PATH .'includes'. DIRECTORY_SEPARATOR .'updater.php';
+            include_once self::$pluginPath .'includes'. DIRECTORY_SEPARATOR .'updater.php';
         }
         if( isset( $_GET['force-check'] ) && $_GET['force-check'] && !defined( 'WP_GITHUB_FORCE_UPDATE' ) ) {
             define( 'WP_GITHUB_FORCE_UPDATE', true );
@@ -60,6 +61,17 @@ class UmichAltmetric {
             wp_enqueue_style( 'umich-altmetric', plugins_url('assets/umich-altmetric.css', __FILE__ ) );
         });
 
+        // ADD EDITOR BLOCKS
+        add_action( 'init', function(){
+            if( function_exists( 'register_block_type' ) ) {
+                foreach( glob( __DIR__ .'/blocks/*',  GLOB_ONLYDIR ) as $block ) {
+                    if( is_file( "{$block}/block.php" ) ) {
+                        include_once "{$block}/block.php";
+                    }
+                }
+            }
+        });
+
         add_shortcode( 'altmetric', function( $atts, $url = '' ){
             self::$displayCounter++;
 
@@ -80,83 +92,17 @@ class UmichAltmetric {
             // normalize url
             $atts['url'] = htmlspecialchars_decode( urldecode( $atts['url'] ) );
 
-            // add limit "page[size]=#" to url
-            $parts = parse_url( urldecode( $atts['url'] ) );
-            parse_str( $parts['query'], $parts['query'] );
-            $parts['query']['page']['size'] = $atts['limit'] ?: 1;
-            $parts['query'] = http_build_query( $parts['query'] );
-            $parts['query'] = $parts['query'] ? '?'. $parts['query'] : '';
-            $atts['url'] = "{$parts['scheme']}://{$parts['host']}{$parts['path']}{$parts['query']}";
-            $atts['url'] = preg_replace( '/\[[0-9]+\]/', '[]', urldecode( $atts['url'] ) );
-            $atts['url'] = str_replace( ' ', '%20', $atts['url'] ); // spaces have to be encoded
-
-            // locate template
-            $tpl = implode( DIRECTORY_SEPARATOR, array( UMICHALTMETRICS_PATH, 'templates', 'default.tpl' ) );
-            $tpl = locate_template( array( 'umich-altmetric/'. $atts['template'] .'.tpl' ), false ) ?: $tpl;
-
-            // GET ALTMETRICS DATA
-            $wpUpload  = wp_upload_dir();
-            $cachePath = implode( DIRECTORY_SEPARATOR, array(
-                $wpUpload['basedir'],
-                'umich-altmetric-cache',
-                md5( $atts['url'] ) .'.cache'
+            $researchItems = self::get(array(
+                'url'   => $atts['url'],
+                'limit' => $atts['limit']
             ));
 
-            if( !file_exists( $cachePath ) || ((@filemtime( $cachePath ) + self::$_cacheTimeout) < time()) ) {
-                // update timestamp so other request don't make a pull request at the same time
-                @touch( $cachePath );
+            // locate template
+            $tpl = implode( DIRECTORY_SEPARATOR, array( self::$pluginPath, 'templates', 'default.tpl' ) );
+            $tpl = locate_template( array( 'umich-altmetric/'. $atts['template'] .'.tpl' ), false ) ?: $tpl;
 
-                // get live results (use curl if available)
-                if( function_exists( 'curl_init' ) ) {
-                    $curl = curl_init();
-                    curl_setopt( $curl, CURLOPT_URL, $atts['url'] );
-                    curl_setopt( $curl, CURLOPT_HEADER, false );
-                    curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
-                    curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true );
-                    curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 3 ); 
-                    curl_setopt( $curl, CURLOPT_TIMEOUT, 10 );
-
-                    $json = curl_exec( $curl );
-                    curl_close( $curl );
-                }
-                else {
-                    $stream = stream_context_create(array(
-                        'http' => array(
-                            'timeout' => 10
-                        )
-                    ));
-                    $json = file_get_contents( $atts['url'], false, $stream );
-                }
-
-                if( $json && ($res = @json_decode( $json )) ) {
-                    if( @$res->meta->response->status == 'ok' ) {
-                        // CACHE RESULTS
-                        wp_mkdir_p( dirname( $cachePath ) );
-
-                        @file_put_contents( $cachePath, $json );
-                    }
-                }
-            }
-
-            if( $resItems = @json_decode( file_get_contents( $cachePath ) ) ) {
-                $researchItems = array(
-                    'items'         => array(),
-                    'relationships' => array()
-                );
-
-                if( $resItems->included ) {
-                    foreach( $resItems->included as $item ) {
-                        $researchItems['relationships'][ $item->type ][ $item->id ] = $item->attributes;
-                    }
-                }
-
-                if( $resItems->data ) {
-                    foreach( $resItems->data as $item ) {
-                        $researchItems['items'][ $item->id ] = $item;
-                    }
-                }
-
-                // DISPLAY DATA
+            // DISPLAY DATA
+            if( $researchItems ) {
                 ob_start();
                 include( $tpl );
                 return ob_get_clean();
@@ -180,6 +126,97 @@ class UmichAltmetric {
                 }
             }
         }
+    }
+
+    static public function get( $params )
+    {
+        $params = array_merge(array(
+            'url'   => '',
+            'limit' => 25
+        ), $params );
+
+        // normalize & validate url
+        $params['url'] = htmlspecialchars_decode( urldecode( $params['url'] ) );
+        if( !$params['url'] || !filter_var( $params['url'], FILTER_VALIDATE_URL ) ) {
+            return false;
+        }
+
+        // add limit "page[size]=#" to url
+        $parts = parse_url( urldecode( $params['url'] ) );
+        parse_str( $parts['query'], $parts['query'] );
+        $parts['query']['page']['size'] = $params['limit'] ?: 1;
+        $parts['query'] = http_build_query( $parts['query'] );
+        $parts['query'] = $parts['query'] ? '?'. $parts['query'] : '';
+        $params['url'] = "{$parts['scheme']}://{$parts['host']}{$parts['path']}{$parts['query']}";
+        $params['url'] = preg_replace( '/\[[0-9]+\]/', '[]', urldecode( $params['url'] ) );
+        $params['url'] = str_replace( ' ', '%20', $params['url'] ); // spaces have to be encoded
+
+        // GET ALTMETRICS DATA
+        $wpUpload  = wp_upload_dir();
+        $cachePath = implode( DIRECTORY_SEPARATOR, array(
+            $wpUpload['basedir'],
+            'umich-altmetric-cache',
+            md5( $params['url'] ) .'.cache'
+        ));
+
+        if( !file_exists( $cachePath ) || ((@filemtime( $cachePath ) + self::$_cacheTimeout) < time()) ) {
+            // update timestamp so other request don't make a pull request at the same time
+            @touch( $cachePath );
+
+            // get live results (use curl if available)
+            if( function_exists( 'curl_init' ) ) {
+                $curl = curl_init();
+                curl_setopt( $curl, CURLOPT_URL, $params['url'] );
+                curl_setopt( $curl, CURLOPT_HEADER, false );
+                curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
+                curl_setopt( $curl, CURLOPT_FOLLOWLOCATION, true );
+                curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 3 ); 
+                curl_setopt( $curl, CURLOPT_TIMEOUT, 10 );
+
+                $json = curl_exec( $curl );
+                curl_close( $curl );
+            }
+            else {
+                $stream = stream_context_create(array(
+                    'http' => array(
+                        'timeout' => 10
+                    )
+                ));
+                $json = file_get_contents( $params['url'], false, $stream );
+            }
+
+            if( $json && ($res = @json_decode( $json )) ) {
+                if( @$res->meta->response->status == 'ok' ) {
+                    // CACHE RESULTS
+                    wp_mkdir_p( dirname( $cachePath ) );
+
+                    @file_put_contents( $cachePath, $json );
+                }
+            }
+        }
+
+        if( $resItems = @json_decode( file_get_contents( $cachePath ) ) ) {
+            $researchItems = array(
+                'items'         => array(),
+                'relationships' => array()
+            );
+
+            if( $resItems->included ) {
+                foreach( $resItems->included as $item ) {
+                    $researchItems['relationships'][ $item->type ][ $item->id ] = $item->attributes;
+                }
+            }
+
+            if( $resItems->data ) {
+                foreach( $resItems->data as $item ) {
+                    $researchItems['items'][ $item->id ] = $item;
+                }
+            }
+
+            return $researchItems;
+        }
+
+        return false;
     }
 }
 UmichAltmetric::init();

@@ -1,7 +1,7 @@
 # UMich Altmetric Data
-Display Altmetric data using a Wordpress shortcode.
+Display Altmetric data using a Wordpress shortcode or block.
 
-You will need to generate an API URL in Altmetric Explorer. (Export Search Results -> Open Results in API) Please see Altmetric's support page for additional help: https://help.altmetric.com/support/solutions/articles/6000189064-exporting-search-results-opening-in-the-explorer-api/
+You will need to generate an API URL in Altmetric Explorer. (Export Search Results -> Open Results in API) Please see Altmetric's support page for additional help: https://help.altmetric.com/support/solutions/articles/6000241368-introduction-to-the-explorer-api
 
 ### Shortcode
 ```

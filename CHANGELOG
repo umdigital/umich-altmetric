@@ -1,3 +1,7 @@
+1.3 (2022-04-13)
+==================
+added Gutenberg block
+
 1.2.5 (2021-11-17)
 ==================
 resolve issue with spaces in search term not being encoded for api call

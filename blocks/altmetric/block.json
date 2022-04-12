@@ -1,0 +1,41 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 2,
+    "name": "umichaltmetric/altmetric",
+    "title": "U-M Altmetric",
+    "category": "embed",
+    "icon": "admin-site-alt3",
+    "description": "Show Altmetric insights",
+    "keywords": [],
+    "version": "1.0.0",
+    "textdomain": "umichaltmetric",
+    "attributes": {
+        "url": {
+            "type": "string"
+        },
+        "badgeType": {
+            "type"   : "string",
+            "default": "medium-donut"
+        },
+        "badgePopover": {
+            "type"   : "string",
+            "default": "right"
+        },
+        "limit": {
+            "type"   : "number",
+            "default": 25
+        },
+        "template": {
+            "type": "string"
+        }
+    },
+
+    "styles": [{
+        "name" : "basic",
+        "label": "Basic",
+        "isDefault": true
+    },{
+        "name" : "plain",
+        "label": "Plain"
+    }]
+}
